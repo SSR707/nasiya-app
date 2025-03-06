@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { FieldType } from "../login";
-import { request } from "../../../config/request";
+import { FieldType } from "../../login";
+import { request } from "../../../../config/request";
 
 export const usePostLoginUser = () => {
   return useMutation({

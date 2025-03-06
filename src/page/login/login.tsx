@@ -4,10 +4,10 @@ import type { FormProps } from "antd";
 import LoginLogo from "../../assets/svg/login-logo.svg";
 import { Link, useNavigate } from "react-router-dom";
 import Title from "antd/es/typography/Title";
-import { usePostLoginUser } from "./service/usePostLoginUser";
+import { usePostLoginUser } from "./service/mutation/usePostLoginUser";
 import { loadState, saveState } from "../../config/storage";
 import { useEffect } from "react";
-import { useGetUserCheck } from "./service/useGetUserCheck";
+import { useGetUserCheck } from "./service/query/useGetUserCheck";
 
 export interface FieldType {
   login?: string;
