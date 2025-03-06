@@ -277,8 +277,9 @@ export const Home = () => {
                 margin: "0px",
               }}
             >
-              {useProfile?.data?.wallet > 200000 ? "To‘lov qilingan" : "To‘lov qilinmagan"}
-
+              {useProfile?.data?.wallet > 200000
+                ? "To‘lov qilingan"
+                : "To‘lov qilinmagan"}
             </Title>
           </Row>
         </Col>

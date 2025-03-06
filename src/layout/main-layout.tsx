@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Col, Layout, Menu, Row } from "antd";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useGetUserCheck } from "../page/login/service/query/useGetUserCheck";
 import { loadState } from "../config/storage";
 import Title from "antd/es/typography/Title";
@@ -47,10 +47,11 @@ const MainLayout: React.FC = () => {
             {
               key: "1",
               icon: <MenuFoldOutlined />,
-              label: "Bosh sahifa",
+              label: <Link to="/">Bosh sahifa</Link>,
             },
           ]}
         />
+        
       </Sider>
       <Layout>
         <Header
