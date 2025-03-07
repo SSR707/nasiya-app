@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, Statistic } from "antd";
+import { Button, Card, Col, Modal, Row, Statistic } from "antd";
 import Title from "antd/es/typography/Title";
 import EyesOn from "../../assets/svg/eyes-on.svg";
 import EyesOff from "../../assets/svg/eyes-off.svg";
@@ -11,12 +11,11 @@ import {
 } from "@ant-design/icons";
 import { useGetUserStatistik } from "./service/query/useGetUserStatistik";
 import { useGetUserStatistikLate } from "./service/query/useGetUserStatistikLate";
-import { useGetUserProfile } from "../../layout/service/query/useGetUserProfile";
 export const Home = () => {
   const [eyesToggal, setEyesToggal] = useState(true);
   const { data: userStatistik } = useGetUserStatistik();
   const { data: userStatistikLate } = useGetUserStatistikLate();
-  const { data: useProfile } = useGetUserProfile();
+  const [modal2Open, setModal2Open] = useState(false);
 
   return (
     <>
@@ -229,7 +228,7 @@ export const Home = () => {
                     margin: "0px",
                   }}
                 >
-                  {(useProfile?.data?.wallet ?? 0).toLocaleString()} so‘m
+                  {(userStatistik?.data?.wallet ?? 0).toLocaleString()} so‘m
                 </Title>
               </Col>
               <Col style={{ marginLeft: "auto" }}>
@@ -240,9 +239,31 @@ export const Home = () => {
                     borderRadius: "100%",
                     backgroundColor: "var(--brand)",
                   }}
+                  onClick={() => setModal2Open(true)}
                 >
                   <PlusOutlined style={{ color: "#fff" }} />
                 </Button>
+                <Modal
+                  title="Hisob"
+                  centered
+                  open={modal2Open}
+                  onOk={() => setModal2Open(false)}
+                  onClose={() => setModal2Open(false)}
+                  cancelButtonProps={{ style: { display: "none" } }}
+                >
+                  <Title
+                    level={3}
+                    style={{
+                      fontWeight: 600,
+                      fontSize: "16px",
+                      lineHeight: "157%",
+                      color: "var(--text)",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    Hisobizgizni toldirish uchun adminisratorlar bilan boglaning
+                  </Title>
+                </Modal>
               </Col>
             </Row>
           </Col>
@@ -273,11 +294,11 @@ export const Home = () => {
                 fontWeight: 500,
                 fontSize: "18px",
                 lineHeight: "157%",
-                color: useProfile?.data?.wallet > 200000 ? "green" : "red",
+                color: userStatistik?.data?.wallet > 200000 ? "green" : "red",
                 margin: "0px",
               }}
             >
-              {useProfile?.data?.wallet > 200000
+              {userStatistik?.data?.wallet > 200000
                 ? "To‘lov qilingan"
                 : "To‘lov qilinmagan"}
             </Title>

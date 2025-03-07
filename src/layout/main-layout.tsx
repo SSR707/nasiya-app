@@ -1,17 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UserOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
 import { Button, Col, Layout, Menu, Row } from "antd";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useGetUserCheck } from "../page/login/service/query/useGetUserCheck";
 import { loadState } from "../config/storage";
 import Title from "antd/es/typography/Title";
 import EssyCeditLogo from "../assets/svg/Easycredit-logo.svg";
 import UserImg from "../assets/svg/defaultUserimg.jpg";
+import Calendar from "../assets/svg/kalendar.svg";
 
 const { Header, Sider, Content } = Layout;
 const MainLayout: React.FC = () => {
   const { isLoading, error, data } = useGetUserCheck();
-  console.log(data);
+  const location = useLocation();
+  const locationPath: Record<string, string> = {
+    "/": "Bosh sahifa",
+    "/debtors": "Mijozlar",
+    "/debtors/add": "Mijoz Yaratish",
+  };
+  const locationNum: Record<string, string> = {
+    "/": "1",
+    "/debtors": "2-1",
+    "/debtors/add": "2-2",
+  };
+  const pagesNum: string = locationNum[location.pathname] || "1";
+  const pagesName: string =
+    locationPath[location.pathname] || "Sahifa topilmadi";
   const navigate = useNavigate();
   const token = loadState("AccessToken");
   useEffect(() => {
@@ -42,16 +61,80 @@ const MainLayout: React.FC = () => {
         <Menu
           style={{ backgroundColor: "var(--neutral-05)" }}
           mode="inline"
-          defaultSelectedKeys={["1"]}
+          defaultSelectedKeys={[pagesNum]}
           items={[
             {
               key: "1",
               icon: <MenuFoldOutlined />,
-              label: <Link to="/">Bosh sahifa</Link>,
+              label: (
+                <Link
+                  to="/"
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    lineHeight: "157%",
+                    color: "var(--text)",
+                  }}
+                >
+                  Bosh sahifa
+                </Link>
+              ),
+            },
+            {
+              key: "2",
+              icon: <UserOutlined />,
+              label: (
+                <Title
+                  level={3}
+                  style={{
+                    fontWeight: 600,
+                    fontSize: "14px",
+                    lineHeight: "157%",
+                    color: "var(--text)",
+                  }}
+                >
+                  MIjozlar
+                </Title>
+              ),
+              children: [
+                {
+                  key: "2-1",
+                  icon: <UserOutlined />,
+                  label: (
+                    <Link
+                      to="/debtors"
+                      style={{
+                        fontWeight: 600,
+                        fontSize: "14px",
+                        lineHeight: "157%",
+                        color: "var(--text)",
+                      }}
+                    >
+                      MIjozlar
+                    </Link>
+                  ),
+                },
+                {
+                  key: "2-2",
+                  icon: <UserAddOutlined />,
+                  label: (
+                    <Link
+                      to="/debtors/add"
+                      style={{
+                        fontWeight: 600,
+                        fontSize: "14px",
+                        lineHeight: "157%",
+                        color: "var(--text)",
+                      }}
+                    >
+                      Mijoz Yaratish
+                    </Link>
+                  ),
+                },
+              ],
             },
           ]}
         />
-        
       </Sider>
       <Layout>
         <Header
@@ -114,38 +197,47 @@ const MainLayout: React.FC = () => {
             backgroundColor: "#F2F5FA",
           }}
         >
-          <Col
+          <Row
             style={{
               margin: "16px 36px",
               padding: "22px 24px",
               background: "var(--primary-02)",
               borderRadius: "20px",
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <Title
-              level={3}
-              style={{
-                fontWeight: 700,
-                fontSize: "18px",
-                lineHeight: "122%",
-                color: "var(--text)",
-                margin: 0,
-              }}
-            >
-              Dashboard
-            </Title>
-            <Title
-              level={3}
-              style={{
-                fontWeight: 600,
-                fontSize: "14px",
-                lineHeight: "157%",
-                color: "var(--text)",
-              }}
-            >
-              Bosh sahifa
-            </Title>
-          </Col>
+            <Col>
+              <Title
+                level={3}
+                style={{
+                  fontWeight: 700,
+                  fontSize: "18px",
+                  lineHeight: "122%",
+                  color: "var(--text)",
+                  margin: 0,
+                }}
+              >
+                Dashboard
+              </Title>
+              <Title
+                level={3}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  lineHeight: "157%",
+                  color: "var(--text)",
+                }}
+              >
+                {pagesName}
+              </Title>
+            </Col>
+            {location.pathname === "/" ? (
+              <Button style={{ padding: "25px 15px", borderRadius: "15px" }}>
+                <img src={Calendar} alt="" width={"35px"} height={"35px"} />
+              </Button>
+            ) : null}
+          </Row>
           <Outlet />
         </Content>
       </Layout>

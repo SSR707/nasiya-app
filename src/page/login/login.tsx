@@ -39,8 +39,8 @@ export const Login = () => {
           navigate("/", { replace: true });
         },
         onError: (error: any) => {
-          const errorMessage = error.response?.data?.message || "Login xatosi";
-
+          const errorMessage = error.response?.data?.message;
+          console.log(error, errorMessage);
           form.setFields([
             {
               name: "login",
@@ -92,6 +92,7 @@ export const Login = () => {
             </Title>
 
             <Form
+              form={form}
               name="basic"
               style={{
                 maxWidth: "400px",
