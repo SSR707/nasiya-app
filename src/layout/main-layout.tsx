@@ -22,11 +22,13 @@ const MainLayout: React.FC = () => {
     "/": "Bosh sahifa",
     "/debtors": "Mijozlar",
     "/debtors/add": "Mijoz Yaratish",
+    "/debtor/:id": "Mijoz",
   };
   const locationNum: Record<string, string> = {
     "/": "1",
     "/debtors": "2-1",
     "/debtors/add": "2-2",
+    "/debtor/:id": "0",
   };
   const pagesNum: string = locationNum[location.pathname] || "1";
   const pagesName: string =
@@ -199,7 +201,7 @@ const MainLayout: React.FC = () => {
         >
           <Row
             style={{
-              margin: "16px 36px",
+              margin: "20px 36px",
               padding: "22px 24px",
               background: "var(--primary-02)",
               borderRadius: "20px",

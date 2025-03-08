@@ -39,8 +39,7 @@ export const Login = () => {
           navigate("/", { replace: true });
         },
         onError: (error: any) => {
-          const errorMessage = error.response?.data?.message;
-          console.log(error, errorMessage);
+          const errorMessage = error.response?.data?.error?.message;
           form.setFields([
             {
               name: "login",

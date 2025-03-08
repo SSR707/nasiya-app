@@ -1,0 +1,31 @@
+.custom-dropdown .ant-dropdown-menu {
+  background-color: "#fff";
+  border-radius: 10px;
+  padding: 10px 10px;
+  min-width: 180px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.menu-item {
+  padding: 8px;
+  width: 100%;
+}
+
+.menu-title_sub {
+  font-weight: 600;
+  font-size: 17px;
+  color: "var(--text)";
+  margin: 0;
+  color: blue;
+}
+
+.menu-title_sub_denger {
+  color: red;
+}
+
+.list_item-debtor {
+  width: 100%;
+  background-color: var(--fon-color);
+  padding: 20px 30px 35px 30px;
+  border-radius: 22px;
+}

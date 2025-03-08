@@ -1,7 +1,26 @@
-import { Col, Row, Button, Form, Input, notification } from "antd";
+import {
+  Col,
+  Row,
+  Button,
+  Form,
+  Input,
+  notification,
+  Upload,
+  UploadProps,
+} from "antd";
 import Title from "antd/es/typography/Title";
 import { useState } from "react";
 import { usePostDebtorCreate } from "./service/mutation/usePostDebtorCreate";
+import { PlusOutlined } from "@ant-design/icons";
+import { usePostDebtorImg } from "./service/mutation/usePostDebtorImg";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addDdebtor,
+  deleteDebtorImg,
+  deleteDebtor,
+} from "../../store/slices/debtor-reducer";
+import { RootState } from "../../store/store";
+import { usePostDebtorSubmit } from "./service/mutation/usePostDebtorImgSubmit";
 export interface DebtorI {
   full_name: string;
   phone_number: string;
@@ -11,7 +30,13 @@ export interface DebtorI {
 }
 export const DebtorAdd = () => {
   const [toggal, setToggal] = useState(false);
+  const [form] = Form.useForm();
+  const { debtor } = useSelector((state: RootState) => state.debtor);
+  const dispatch = useDispatch();
   const { mutate, isPending } = usePostDebtorCreate();
+  const { mutate: uploadMutate, isPending: createImgPeading } =
+    usePostDebtorImg();
+  const { mutate: uploadMutateSubmit } = usePostDebtorSubmit();
   const [api, contextHolder] = notification.useNotification();
   const onFinish = (values: any) => {
     mutate(
@@ -23,22 +48,66 @@ export const DebtorAdd = () => {
         image: "",
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           api.success({
             message: "Muvaffaqiyatli saqlandi",
             description: "Debtor ma'lumotlari muvaffaqiyatli qo'shildi!",
           });
+          uploadMutateSubmit(
+            { debtorId: data?.data.id, url: debtor.images[0] },
+            {
+              onSuccess: () => {
+                uploadMutateSubmit({
+                  debtorId: data?.data.id,
+                  url: debtor.images[1],
+                });
+              },
+            }
+          );
+          resetForm();
         },
-        onError: (err) => {
-          console.log(err);
+        onError: (error: any) => {
+          const errorMessage = error.response?.data?.error?.message;
+          form.setFields([
+            {
+              name: ["debtor", "phone_number"],
+              errors: [errorMessage],
+            },
+          ]);
         },
       }
     );
   };
+  const changeUpload: UploadProps["onChange"] = ({ file }) => {
+    if (file.originFileObj && !createImgPeading) {
+      uploadMutate(file.originFileObj, {
+        onSuccess: (data) => {
+          dispatch(
+            addDdebtor({ images: [...debtor.images, data.data.image_url] })
+          );
+        },
+      });
+    }
+  };
+  const changeForm = (changedValues: any) => {
+    if (changedValues.debtor) {
+      dispatch(addDdebtor(changedValues.debtor));
+    }
+  };
+
+  const removeImg = (file: any) => {
+    dispatch(deleteDebtorImg(file.uid));
+  };
+  const resetForm = () => {
+    dispatch(deleteDebtor());
+    setTimeout(() => {
+      form.resetFields();
+    }, 100);
+  };
   return (
     <Row
       style={{
-        margin: " 36px  36px",
+        margin: " 20px  36px",
         gap: "20px",
       }}
     >
@@ -53,9 +122,12 @@ export const DebtorAdd = () => {
         }}
       >
         <Form
+          form={form}
           name="nest-messages"
           layout="vertical"
           onFinish={onFinish}
+          initialValues={{ debtor }}
+          onValuesChange={changeForm}
           style={{ width: "100%", maxWidth: 600 }}
         >
           <Form.Item
@@ -159,6 +231,7 @@ export const DebtorAdd = () => {
           )}
           <Form.Item label={null}>
             <Button
+              disabled={debtor.images.length === 2 ? false : true}
               loading={isPending}
               type="primary"
               htmlType="submit"
@@ -170,7 +243,69 @@ export const DebtorAdd = () => {
               Submit
             </Button>
           </Form.Item>
+          <Form.Item label={null} style={{ textAlign: "center" }}>
+            <Button
+              loading={isPending}
+              onClick={resetForm}
+              htmlType="reset"
+              style={{
+                width: "50%",
+                padding: "20px 15px",
+              }}
+            >
+              Rest
+            </Button>
+          </Form.Item>
         </Form>
+      </Col>
+      <Col>
+        <Col
+          style={{
+            padding: "27px 40px",
+            background: "var(--primary-02)",
+            borderRadius: "20px",
+            border: "2px solid #eee",
+          }}
+        >
+          <Title
+            level={3}
+            style={{
+              fontWeight: 600,
+              fontSize: "14px",
+              color: "var(--text)",
+              margin: "0px 0px 20px 0px",
+            }}
+          >
+            Rasm biriktirish
+          </Title>
+          <Upload
+            listType="picture-card"
+            onChange={changeUpload}
+            onRemove={removeImg}
+            maxCount={2}
+            fileList={debtor.images.map((url, index) => ({
+              uid: index.toString(),
+              name: `image-${index}`,
+              status: "done",
+              url: url,
+            }))}
+          >
+            {debtor.images.length < 2 && (
+              <button
+                style={{
+                  color: "inherit",
+                  cursor: "inherit",
+                  border: 0,
+                  background: "none",
+                }}
+                type="button"
+              >
+                <PlusOutlined />
+                <div style={{ marginTop: 8 }}>Rasm qo‘shish</div>
+              </button>
+            )}
+          </Upload>
+        </Col>
       </Col>
     </Row>
   );

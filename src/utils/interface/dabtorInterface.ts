@@ -1,3 +1,15 @@
+export interface Debt {
+  id: string;
+  debtor_id: string;
+  debt_sum: string;
+  month_sum: string;
+  debt_date: string;
+  debt_period: number;
+  description: string;
+  created_at: number;
+  updated_at: number;
+}
+
 export interface Debtor {
   id: string;
   created_at: string;
@@ -7,6 +19,9 @@ export interface Debtor {
   image: string;
   address: string;
   note: string;
+  images?: string[];
+  likes?: string[];
+  debts?: Debt[];
   store_id: string;
   is_active: boolean;
 }

@@ -4,6 +4,7 @@ import MainLayout from "./layout/main-layout";
 import { Home } from "./page/home/home";
 import { Debtor } from "./page/debtor/debtor";
 import { DebtorAdd } from "./page/debtor/debtorAdd";
+import { DebtorDitiel } from "./page/debtor-ditiel/debtor-ditiel";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="debtors" element={<Debtor />} />
           <Route path="debtors/add" element={<DebtorAdd />} />
+          <Route path="debtor/:id" element={<DebtorDitiel />} />
         </Route>
       </Routes>
     </>

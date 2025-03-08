@@ -21,7 +21,7 @@ export const Home = () => {
     <>
       <Row
         style={{
-          margin: " 36px  36px",
+          margin: " 20px  36px",
           gap: "20px",
         }}
       >
@@ -47,7 +47,7 @@ export const Home = () => {
                   fontWeight: "700",
                   fontSize: "26px",
                   lineHeight: "140%",
-                  color: "var(--fon-color)",
+                  color: "var(--text)",
                   margin: 0,
                 }}
               >
