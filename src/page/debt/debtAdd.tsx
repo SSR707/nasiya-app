@@ -29,7 +29,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const DebtAdd = () => {
   const { id } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [toggal, setToggal] = useState(false);
   const [chekBoxToggal, setchekBoxToggal] = useState(false);
   const { debt } = useSelector((state: RootState) => state.debt);
@@ -71,8 +71,7 @@ export const DebtAdd = () => {
             description: "Debt ma'lumotlari muvaffaqiyatli qo'shildi!",
           });
           resetForm();
-          navigate(`/debtor/${id}`)
-          
+          navigate(`/debtor/${id}`);
         },
         onError: (error) => {
           api.error({
@@ -176,7 +175,6 @@ export const DebtAdd = () => {
                 Sana
               </Title>
             }
-            rules={[{ required: true, message: "Sanani tanlang" }]}
           >
             <DatePicker
               value={selectedDate}
