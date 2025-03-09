@@ -2,12 +2,15 @@ export interface Debt {
   id: string;
   debtor_id: string;
   debt_sum: string;
-  month_sum: string;
+  debt_name: string;
+  month_sum: 0;
   debt_date: string;
   debt_period: number;
   description: string;
   created_at: number;
   updated_at: number;
+  payment: [];
+  images: [];
 }
 
 export interface Debtor {

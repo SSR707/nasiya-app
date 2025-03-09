@@ -90,7 +90,8 @@ export const DebtCard = ({
       >
         <Row
           style={{
-            width: `${paidPercentage?.toFixed(0)}%`,
+            width:
+              paidPercentage === 0 ? "0" : `${paidPercentage?.toFixed(0)}%`,
             padding: "5px",
             backgroundColor: "green",
           }}

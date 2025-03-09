@@ -9,21 +9,42 @@ import {
   DatePicker,
   Checkbox,
   Select,
+  InputNumber,
+  UploadProps,
 } from "antd";
 import Title from "antd/es/typography/Title";
 import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addDebt,
+  deleteDebt,
+  deleteDebtImg,
+} from "../../store/slices/debt-reducer";
+import { RootState } from "../../store/store";
+import { usePostDebtImg } from "./service/mutation/usePostDebtImg";
+import { usePostDebtCreate } from "./service/mutation/usePostDebtCreate";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const DebtAdd = () => {
+  const { id } = useParams();
+  const navigate = useNavigate()
   const [toggal, setToggal] = useState(false);
   const [chekBoxToggal, setchekBoxToggal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
+  const { debt } = useSelector((state: RootState) => state.debt);
+  const { mutate, isPending } = usePostDebtImg();
+  const { mutate: DebtCreate, isPending: isPendingDebtCreate } =
+    usePostDebtCreate();
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
+    debt.debt_date ? dayjs(debt.debt_date).add(5, "hour") : null
+  );
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (chekBoxToggal) {
-      setSelectedDate(dayjs());
+      setSelectedDate(dayjs().add(5, "hour"));
     }
   }, [chekBoxToggal]);
   const [api, contextHolder] = notification.useNotification();
@@ -31,7 +52,67 @@ export const DebtAdd = () => {
     setSelectedDate(date);
     if (date) setchekBoxToggal(false);
   };
-  const onFinish = (values: any) => {};
+  const onFinish = (values: any) => {
+    values.debt.debt_date = selectedDate ? selectedDate.toISOString() : null;
+    values.debt.debt_period = +values.debt.debt_period;
+    DebtCreate(
+      {
+        debtor_id: id,
+        debt_name: values.debt.debt_date?.trim() || "",
+        debt_date: values.debt.debt_date?.trim() || "",
+        debt_sum: values.debt.debt_sum || 0,
+        debt_period: values.debt.debt_period || 0,
+        description: values.debt?.description?.trim() || "",
+      },
+      {
+        onSuccess: () => {
+          api.success({
+            message: "Muvaffaqiyatli saqlandi",
+            description: "Debt ma'lumotlari muvaffaqiyatli qo'shildi!",
+          });
+          resetForm();
+          navigate(`/debtor/${id}`)
+          
+        },
+        onError: (error) => {
+          api.error({
+            message: "Error",
+            description: `${error}`,
+          });
+          console.log(error);
+        },
+      }
+    );
+  };
+  const ChangeForm = (changedValues: any) => {
+    console.log(changedValues);
+    if (changedValues.debt) {
+      changedValues.debt.debt_date = selectedDate
+        ? selectedDate.toISOString()
+        : null;
+      dispatch(addDebt(changedValues.debt));
+    }
+  };
+  const changeImg: UploadProps["onChange"] = ({ file }) => {
+    if (file.originFileObj && !isPending) {
+      mutate(file.originFileObj, {
+        onSuccess: (data) => {
+          dispatch(addDebt({ images: [...debt.images, data.data.image_url] }));
+        },
+      });
+    }
+  };
+  const removeImg = (file: any) => {
+    dispatch(deleteDebtImg(file.uid));
+  };
+  const resetForm = () => {
+    dispatch(deleteDebt());
+    setchekBoxToggal(false);
+    setSelectedDate(null);
+    setTimeout(() => {
+      form.resetFields();
+    }, 100);
+  };
   return (
     <Row
       style={{
@@ -54,10 +135,12 @@ export const DebtAdd = () => {
           name="nest-messages"
           layout="vertical"
           onFinish={onFinish}
+          onValuesChange={ChangeForm}
+          initialValues={{ debt }}
           style={{ width: "100%", maxWidth: 600 }}
         >
           <Form.Item
-            name={["debtor", "full_name"]}
+            name={["debt", "debt_name"]}
             label={
               <Title
                 level={3}
@@ -68,17 +151,18 @@ export const DebtAdd = () => {
                   margin: 0,
                 }}
               >
-                Ism
+                Mahsulot nomi
               </Title>
             }
-            rules={[{ required: true, message: "Ismni kiriting" }]}
+            rules={[{ required: true, message: "Mahsulot nomi kiriting" }]}
           >
             <Input
               style={{ padding: "10px 15px" }}
-              placeholder="Ismini kiriting"
+              placeholder="Mahsulot nomi"
             />
           </Form.Item>
           <Form.Item
+            name={["debt", "debt_date"]}
             label={
               <Title
                 level={3}
@@ -92,6 +176,7 @@ export const DebtAdd = () => {
                 Sana
               </Title>
             }
+            rules={[{ required: true, message: "Sanani tanlang" }]}
           >
             <DatePicker
               value={selectedDate}
@@ -116,8 +201,35 @@ export const DebtAdd = () => {
               Bugun
             </Checkbox>
           </Form.Item>
-
           <Form.Item
+            name={["debt", "debt_sum"]}
+            label={
+              <Title
+                level={3}
+                style={{
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  color: "var(--text)",
+                  margin: 0,
+                }}
+              >
+                Mahsulot Narxi
+              </Title>
+            }
+            rules={[
+              { required: true, message: "Mahsulot Narxini kiriting" },
+              { pattern: /^\d+$/, message: "Faqat raqam kiriting" },
+            ]}
+          >
+            <InputNumber
+              style={{ width: "100%", padding: "5px 10px" }}
+              placeholder="Mahsulot Narxi"
+              min={0}
+              controls={false}
+            />
+          </Form.Item>
+          <Form.Item
+            name={["debt", "debt_period"]}
             label={
               <Title
                 level={3}
@@ -131,6 +243,7 @@ export const DebtAdd = () => {
                 Muddat
               </Title>
             }
+            rules={[{ required: true, message: "Qarz muddatini tanlang" }]}
           >
             <Select
               placeholder="Qarz muddatini tanlang"
@@ -147,7 +260,7 @@ export const DebtAdd = () => {
                   fontSize: "16px",
                   color: "var(--text)",
                 }}
-                value="1oy"
+                value={1}
               >
                 1 oy
               </Select.Option>
@@ -157,7 +270,7 @@ export const DebtAdd = () => {
                   fontSize: "16px",
                   color: "var(--text)",
                 }}
-                value="2oy"
+                value={2}
               >
                 2 oy
               </Select.Option>
@@ -167,7 +280,7 @@ export const DebtAdd = () => {
                   fontSize: "16px",
                   color: "var(--text)",
                 }}
-                value="3oy"
+                value={3}
               >
                 3 oy
               </Select.Option>
@@ -177,7 +290,7 @@ export const DebtAdd = () => {
                   fontSize: "16px",
                   color: "var(--text)",
                 }}
-                value="6oy"
+                value={6}
               >
                 6 oy
               </Select.Option>
@@ -187,9 +300,19 @@ export const DebtAdd = () => {
                   fontSize: "16px",
                   color: "var(--text)",
                 }}
-                value="9oy"
+                value={9}
               >
                 9 oy
+              </Select.Option>
+              <Select.Option
+                style={{
+                  fontWeight: 600,
+                  fontSize: "16px",
+                  color: "var(--text)",
+                }}
+                value={12}
+              >
+                12 oy
               </Select.Option>
             </Select>
           </Form.Item>
@@ -211,7 +334,7 @@ export const DebtAdd = () => {
               }
               rules={[{ message: "Eslatmani kiriting" }]}
             >
-              <Input.TextArea placeholder="Eslatma kiriting" />
+              <Input.TextArea placeholder="Izoh qoshish" />
             </Form.Item>
           ) : (
             <Button
@@ -222,11 +345,13 @@ export const DebtAdd = () => {
               }}
               onClick={() => setToggal(!toggal)}
             >
-              Eslatma qo‘shish
+              Izoh qoshish
             </Button>
           )}
           <Form.Item label={null}>
             <Button
+              disabled={debt.images.length === 2 ? false : true}
+              loading={isPendingDebtCreate}
               type="primary"
               htmlType="submit"
               style={{
@@ -239,7 +364,8 @@ export const DebtAdd = () => {
           </Form.Item>
           <Form.Item label={null} style={{ textAlign: "center" }}>
             <Button
-              onClick={() => {}}
+              loading={isPendingDebtCreate}
+              onClick={() => resetForm()}
               htmlType="reset"
               style={{
                 width: "50%",
@@ -273,22 +399,30 @@ export const DebtAdd = () => {
           </Title>
           <Upload
             listType="picture-card"
-            onChange={() => {}}
-            onRemove={() => {}}
+            onChange={changeImg}
+            onRemove={removeImg}
             maxCount={2}
+            fileList={debt.images.map((url, index) => ({
+              uid: index.toString(),
+              name: `image-${index}`,
+              status: "done",
+              url: url,
+            }))}
           >
-            <button
-              style={{
-                color: "inherit",
-                cursor: "inherit",
-                border: 0,
-                background: "none",
-              }}
-              type="button"
-            >
-              <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Rasm qo‘shish</div>
-            </button>
+            {debt.images.length < 2 ? (
+              <button
+                style={{
+                  color: "inherit",
+                  cursor: "inherit",
+                  border: 0,
+                  background: "none",
+                }}
+                type="button"
+              >
+                <PlusOutlined />
+                <div style={{ marginTop: 8 }}>Rasm qo‘shish</div>
+              </button>
+            ) : null}
           </Upload>
         </Col>
       </Col>
