@@ -22,17 +22,19 @@ const MainLayout: React.FC = () => {
     "/": "Bosh sahifa",
     "/debtors": "Mijozlar",
     "/debtors/add": "Mijoz Yaratish",
-    "/debtor/:id": "Mijoz",
   };
+
   const locationNum: Record<string, string> = {
     "/": "1",
     "/debtors": "2-1",
     "/debtors/add": "2-2",
-    "/debtor/:id": "0",
   };
-  const pagesNum: string = locationNum[location.pathname] || "1";
-  const pagesName: string =
-    locationPath[location.pathname] || "Sahifa topilmadi";
+  const pagesNum: string = location.pathname.startsWith("/debtor/")
+    ? "0"
+    : locationNum[location.pathname] || "1";
+  const pagesName: string = location.pathname.startsWith("/debtor/")
+    ? "Mijoz"
+    : locationPath[location.pathname] || "Sahifa Topilmadi";
   const navigate = useNavigate();
   const token = loadState("AccessToken");
   useEffect(() => {

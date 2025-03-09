@@ -28,7 +28,7 @@ import { useGetDebtorLIke } from "./service/mutation/useGetDebtorLIke";
 import { client } from "../../config/query-client";
 import { useState } from "react";
 import { useDeleteDebtor } from "./service/mutation/useDeleteDebtor";
-
+import { useGetDebtsNextPay } from "./service/query/useGetDebtNextPay";
 export const DebtorDitiel = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetDebtorById(id);
@@ -36,6 +36,8 @@ export const DebtorDitiel = () => {
   const [api, contextHolder] = notification.useNotification();
   const [modal2Open, setModal2Open] = useState(false);
   const { mutate: deleteMutate } = useDeleteDebtor();
+  const nextPaymentsData = useGetDebtsNextPay(debts || []);
+  const nextPay = nextPaymentsData.map((items) => items.data).filter(Boolean);
   const navigate = useNavigate();
   const { mutate } = useGetDebtorLIke();
   const deleteDebtor = () => {
@@ -233,16 +235,28 @@ export const DebtorDitiel = () => {
               }}
             >
               {debts && debts.length > 0 ? (
-                debts.map((item) => (
-                  <li key={item.id} className="list_item-debtor">
-                    <DebtCard
-                      date={dayjs(item.created_at).format("MMM D, YYYY HH:mm")}
-                      debt_sum={item.debt_sum}
-                      next_pay_date={item.debt_date}
-                      next_pay_sum={item.month_sum}
-                    />
-                  </li>
-                ))
+                debts.map((item) => {
+                  const result = nextPay?.find(
+                    (items) => items.debtId === item.id
+                  );
+                  return (
+                    <li key={item.id} className="list_item-debtor">
+                      <DebtCard
+                        date={dayjs(item.debt_date).format("MMM D, YYYY HH:mm")}
+                        debt_sum={item.debt_sum}
+                        next_pay_date={dayjs(result?.next_pay_date).format(
+                          "MMM D, YYYY HH:mm"
+                        )}
+                        next_pay_sum={
+                          typeof result?.nextMonth === "number"
+                            ? item?.month_sum
+                            : result?.nextMonth
+                        }
+                        paidPercentage={result?.paidPercentage}
+                      />
+                    </li>
+                  );
+                })
               ) : (
                 <Col
                   style={{
@@ -291,6 +305,7 @@ export const DebtorDitiel = () => {
               color: "var( --neutral-05)",
               backgroundColor: "var(--brand)",
             }}
+            onClick={() => navigate(`/debtor/${id}/debt/add`)}
           >
             <PlusOutlined />
             Qoshish

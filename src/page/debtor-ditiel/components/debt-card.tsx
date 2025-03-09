@@ -5,6 +5,7 @@ interface DebtCardI {
   debt_sum: string;
   next_pay_date: string;
   next_pay_sum: string;
+  paidPercentage: number;
 }
 
 export const DebtCard = ({
@@ -12,39 +13,17 @@ export const DebtCard = ({
   debt_sum,
   next_pay_date,
   next_pay_sum,
+  paidPercentage,
 }: DebtCardI) => {
   return (
     <>
-        <Row
-          style={{
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "20px",
-          }}
-        >
-          <Title
-            level={4}
-            style={{
-              fontWeight: 600,
-              fontSize: "18px",
-              color: "var(--text)",
-              margin: "0px 0px 3px 0px",
-            }}
-          >
-            {date}
-          </Title>
-          <Title
-            level={4}
-            style={{
-              fontWeight: 700,
-              fontSize: "22px",
-              color: "var(--brand)",
-              margin: "0px 0px 3px 0px",
-            }}
-          >
-            {debt_sum} so‘m
-          </Title>
-        </Row>
+      <Row
+        style={{
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "20px",
+        }}
+      >
         <Title
           level={4}
           style={{
@@ -54,46 +33,69 @@ export const DebtCard = ({
             margin: "0px 0px 3px 0px",
           }}
         >
-          Keyingi to‘lov: {next_pay_date}
+          {date}
         </Title>
         <Title
           level={4}
           style={{
             fontWeight: 700,
-            fontSize: "28px",
-            color: "var(--secondary-color)",
+            fontSize: "22px",
+            color: "var(--brand)",
             margin: "0px 0px 3px 0px",
           }}
         >
-          {next_pay_sum}{" "}
-          <span
-            style={{
-              fontWeight: 400,
-
-              fontSize: "20px",
-              color: "var(--text)",
-            }}
-          >
-            so‘m
-          </span>
+          {debt_sum} so‘m
         </Title>
-        <Row
+      </Row>
+      <Title
+        level={4}
+        style={{
+          fontWeight: 600,
+          fontSize: "18px",
+          color: "var(--text)",
+          margin: "0px 0px 3px 0px",
+        }}
+      >
+        Keyingi to‘lov: {next_pay_date}
+      </Title>
+      <Title
+        level={4}
+        style={{
+          fontWeight: 700,
+          fontSize: "28px",
+          color: "var(--secondary-color)",
+          margin: "0px 0px 3px 0px",
+        }}
+      >
+        {next_pay_sum}{" "}
+        <span
           style={{
-            width: "100%",
-            backgroundColor: "#CCCCCC",
-            borderRadius: "20px",
-            marginTop: "25px",
-            overflow: "hidden",
+            fontWeight: 400,
+
+            fontSize: "20px",
+            color: "var(--text)",
           }}
         >
-          <Row
-            style={{
-              width: "80%",
-              padding: "5px",
-              backgroundColor: "green",
-            }}
-          ></Row>
-        </Row>
+          so‘m
+        </span>
+      </Title>
+      <Row
+        style={{
+          width: "100%",
+          backgroundColor: "#CCCCCC",
+          borderRadius: "20px",
+          marginTop: "25px",
+          overflow: "hidden",
+        }}
+      >
+        <Row
+          style={{
+            width: `${paidPercentage?.toFixed(0)}%`,
+            padding: "5px",
+            backgroundColor: "green",
+          }}
+        ></Row>
+      </Row>
     </>
   );
 };
