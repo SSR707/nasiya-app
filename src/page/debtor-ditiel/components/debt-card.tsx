@@ -1,5 +1,6 @@
-import { Row } from "antd";
+import { Flex, Progress, Row } from "antd";
 import Title from "antd/es/typography/Title";
+import { useState } from "react";
 interface DebtCardI {
   date: string;
   debt_sum: string;
@@ -15,6 +16,7 @@ export const DebtCard = ({
   next_pay_sum,
   paidPercentage,
 }: DebtCardI) => {
+
   return (
     <>
       <Row
@@ -79,23 +81,9 @@ export const DebtCard = ({
           so‘m
         </span>
       </Title>
-      <Row
-        style={{
-          width: "100%",
-          backgroundColor: "#CCCCCC",
-          borderRadius: "20px",
-          marginTop: "25px",
-          overflow: "hidden",
-        }}
-      >
-        <Row
-          style={{
-            width: `${paidPercentage?.toFixed(0)}%`,
-            padding: "5px",
-            backgroundColor: paidPercentage === 0 ? "" : "green",
-          }}
-        ></Row>
-      </Row>
+      <Flex vertical gap="small" style={{ marginTop: "25px" }}>
+        <Progress size={{ height: 13 }} percent={+paidPercentage?.toFixed(0)} type="line" />
+      </Flex>
     </>
   );
 };

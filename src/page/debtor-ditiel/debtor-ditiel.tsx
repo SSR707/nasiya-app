@@ -12,7 +12,7 @@ import {
   Spin,
 } from "antd";
 import Title from "antd/es/typography/Title";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -38,6 +38,7 @@ export const DebtorDitiel = () => {
   const { mutate: deleteMutate } = useDeleteDebtor();
   const nextPaymentsData = useGetDebtsNextPay(debts || []);
   const nextPay = nextPaymentsData.map((items) => items.data).filter(Boolean);
+  console.log(nextPay);
   const navigate = useNavigate();
   const { mutate } = useGetDebtorLIke();
   const deleteDebtor = () => {
@@ -54,7 +55,6 @@ export const DebtorDitiel = () => {
         }, 200);
       },
       onError: (error) => {
-        console.log(error);
         api.error({
           message: "Error",
           description: "Xatolik Yuz berdi!",
@@ -241,19 +241,23 @@ export const DebtorDitiel = () => {
                   );
                   return (
                     <li key={item.id} className="list_item-debtor">
-                      <DebtCard
-                        date={dayjs(item.debt_date).format("MMM D, YYYY HH:mm")}
-                        debt_sum={item.debt_sum}
-                        next_pay_date={dayjs(result?.next_pay_date).format(
-                          "MMM D, YYYY HH:mm"
-                        )}
-                        next_pay_sum={
-                          typeof result?.nextMonth === "number"
-                            ? item?.month_sum
-                            : result?.nextMonth
-                        }
-                        paidPercentage={result?.paidPercentage}
-                      />
+                      <Link to={`/debt/${item.id}`}>
+                        <DebtCard
+                          date={dayjs(item.debt_date).format(
+                            "MMM D, YYYY HH:mm"
+                          )}
+                          debt_sum={item.debt_sum}
+                          next_pay_date={dayjs(result?.next_pay_date).format(
+                            "MMM D, YYYY HH:mm"
+                          )}
+                          next_pay_sum={
+                            typeof result?.nextMonth === "number"
+                              ? item?.month_sum
+                              : result?.nextMonth
+                          }
+                          paidPercentage={result?.paidPercentage}
+                        />
+                      </Link>
                     </li>
                   );
                 })

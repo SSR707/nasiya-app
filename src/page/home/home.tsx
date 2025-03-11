@@ -246,6 +246,7 @@ export const Home = () => {
                 <Modal
                   title="Hisob"
                   centered
+                  closable={false}
                   open={modal2Open}
                   onOk={() => setModal2Open(false)}
                   onClose={() => setModal2Open(false)}

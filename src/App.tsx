@@ -6,6 +6,7 @@ import { Debtor } from "./page/debtor/debtor";
 import { DebtorAdd } from "./page/debtor/debtorAdd";
 import { DebtorDitiel } from "./page/debtor-ditiel/debtor-ditiel";
 import { DebtAdd } from "./page/debt/debtAdd";
+import { Debt } from "./page/debt/debt";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="debtors/add" element={<DebtorAdd />} />
           <Route path="debtor/:id" element={<DebtorDitiel />} />
           <Route path="debtor/:id/debt/add" element={<DebtAdd />} />
+          <Route path="debt/:id" element={<Debt />} />
         </Route>
       </Routes>
     </>

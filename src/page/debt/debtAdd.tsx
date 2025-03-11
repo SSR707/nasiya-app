@@ -26,6 +26,8 @@ import { RootState } from "../../store/store";
 import { usePostDebtImg } from "./service/mutation/usePostDebtImg";
 import { usePostDebtCreate } from "./service/mutation/usePostDebtCreate";
 import { useNavigate, useParams } from "react-router-dom";
+import { usePostDebtUploadImg } from "./service/mutation/usePostDebtUploadImg";
+import "./style/debt.css";
 
 export const DebtAdd = () => {
   const { id } = useParams();
@@ -34,6 +36,7 @@ export const DebtAdd = () => {
   const [chekBoxToggal, setchekBoxToggal] = useState(false);
   const { debt } = useSelector((state: RootState) => state.debt);
   const { mutate, isPending } = usePostDebtImg();
+  const { mutate: UploadImg } = usePostDebtUploadImg();
   const { mutate: DebtCreate, isPending: isPendingDebtCreate } =
     usePostDebtCreate();
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
@@ -58,18 +61,25 @@ export const DebtAdd = () => {
     DebtCreate(
       {
         debtor_id: id,
-        debt_name: values.debt.debt_date?.trim() || "",
+        debt_name: values.debt.debt_name?.trim() || "",
         debt_date: values.debt.debt_date?.trim() || "",
         debt_sum: values.debt.debt_sum || 0,
         debt_period: values.debt.debt_period || 0,
         description: values.debt?.description?.trim() || "",
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
           api.success({
             message: "Muvaffaqiyatli saqlandi",
             description: "Debt ma'lumotlari muvaffaqiyatli qo'shildi!",
           });
+          UploadImg(
+            { debt_id: data.data.id, url: debt.images[0] },
+            {
+              onSuccess: () =>
+                UploadImg({ debt_id: data.data.id, url: debt.images[1] }),
+            }
+          );
           resetForm();
           navigate(`/debtor/${id}`);
         },
@@ -78,13 +88,11 @@ export const DebtAdd = () => {
             message: "Error",
             description: `${error}`,
           });
-          console.log(error);
         },
       }
     );
   };
   const ChangeForm = (changedValues: any) => {
-    console.log(changedValues);
     if (changedValues.debt) {
       changedValues.debt.debt_date = selectedDate
         ? selectedDate.toISOString()

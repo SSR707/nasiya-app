@@ -43,9 +43,9 @@ export const Debtor = () => {
       key: "image",
       render: (images: any) => {
         return (
-          <Row style={{ gap: "10px" }}>
-            <Image width={80} height={80} src={`${images[0]?.image}`} />
-            <Image width={80} height={80} src={`${images[1]?.image}`} />
+          <Row style={{ gap: "5px" }}>
+            <Image width={70} height={80} src={`${images[0]?.image}`} />
+            <Image width={70} height={80} src={`${images[1]?.image}`} />
           </Row>
         );
       },

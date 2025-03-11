@@ -30,10 +30,10 @@ const MainLayout: React.FC = () => {
     "/debtors/add": "2-2",
   };
   const pagesNum: string = location.pathname.startsWith("/debtor/")
-    ? "0"
+    ? "0" : location.pathname.startsWith("/debt/") ? '0'
     : locationNum[location.pathname] || "1";
   const pagesName: string = location.pathname.startsWith("/debtor/")
-    ? "Mijoz"
+    ? "Mijoz" : location.pathname.startsWith("/debt/") ? 'Credit'
     : locationPath[location.pathname] || "Sahifa Topilmadi";
   const navigate = useNavigate();
   const token = loadState("AccessToken");
