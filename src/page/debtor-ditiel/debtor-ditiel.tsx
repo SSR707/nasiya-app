@@ -55,9 +55,11 @@ export const DebtorDitiel = () => {
         }, 200);
       },
       onError: (error) => {
+
+        console.log(error)
         api.error({
           message: "Error",
-          description: "Xatolik Yuz berdi!",
+          description: `Xatolik Yuz berdi! ${error}`,
         });
       },
     });
@@ -70,6 +72,9 @@ export const DebtorDitiel = () => {
     });
   };
   const handleMenuClick: MenuProps["onClick"] = (e) => {
+    if (e.key === "1") {
+      navigate(`/debtors/edit/${id}`);
+    }
     if (e.key === "2") {
       setModal2Open(true);
     }

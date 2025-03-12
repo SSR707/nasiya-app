@@ -1,10 +1,13 @@
 import {
   Button,
+  Checkbox,
+  CheckboxProps,
   Col,
   Drawer,
   Dropdown,
   Flex,
   Image,
+  Input,
   List,
   MenuProps,
   Modal,
@@ -36,21 +39,38 @@ const PaymentManu = [
   "Har qanday miqdorda so‘ndirish",
   "To‘lov muddatini tanlash",
 ];
+const CheckboxGroup = Checkbox.Group;
+const plainOptions = ["Option 1", "Option 2", "Option 3"];
 export const Debt = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data, isLoading } = useGetDebtById(id);
-  
+
   const { mutate } = useDeleteDebt();
   const { mutate: PaymenetMutate } = usePostPayment();
   const [api, contextHolder] = notification.useNotification();
   const [modal3Open, setModal3Open] = useState(false);
   const [modal2Open, setModal2Open] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
   const debtDate = dayjs(data?.data?.debt_date);
   const newMonthIndex =
     data?.data?.initial_debt_period - data?.data?.debt_period;
   const newMonthName = debtDate.subtract(newMonthIndex, "month").format("MMMM");
+
+  const [checkedList, setCheckedList] = useState<string[]>([]);
+
+  const checkAll = plainOptions.length === checkedList.length;
+  const indeterminate =
+    checkedList.length > 0 && checkedList.length < plainOptions.length;
+
+  const onChange = (list: string[]) => {
+    setCheckedList(list);
+  };
+
+  const onCheckAllChange: CheckboxProps["onChange"] = (e) => {
+    setCheckedList(e.target.checked ? plainOptions : []);
+  };
 
   const [open, setOpen] = useState(false);
   const deleteDebt = () => {
@@ -75,7 +95,9 @@ export const Debt = () => {
     });
   };
   const handleMenuClick: MenuProps["onClick"] = (e) => {
-    if (e.key === "2") {
+    if (e.key === "1") {
+      navigate(`/debt/edit/${id}`);
+    } else if (e.key === "2") {
       setModal2Open(true);
     }
   };
@@ -119,8 +141,16 @@ export const Debt = () => {
     setModal3Open(true);
   };
 
-  const clickPay = (type: string) => {
+  const clickPay = () => {
     const date = new Date();
+    const type =
+      selectModel === 1
+        ? "one_month"
+        : selectModel === 2
+        ? "multi_month"
+        : selectModel === 2
+        ? "multi_month"
+        : "";
     PaymenetMutate(
       { debt_id: id, sum, type, date: date.toISOString() },
       {
@@ -128,12 +158,25 @@ export const Debt = () => {
           setIsSuccess(true);
           setModal3Open(false);
           setOpen(false);
+          client.invalidateQueries({ queryKey: ["debt", id] });
         },
         onError: (error) => {
           console.log(error);
         },
       }
     );
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = +e.target.value;
+    const maxValue = data?.data?.debt_sum || 0;
+
+    if (value > maxValue) {
+      setSum(0);
+      setError(`To‘lov miqdori ${maxValue} dan oshmasligi kerak!`);
+    } else {
+      setSum(value);
+      setError("");
+    }
   };
   return (
     <>
@@ -553,7 +596,7 @@ export const Debt = () => {
               centered
               open={modal3Open}
               closable={false}
-              onOk={() => clickPay("one_month")}
+              onOk={clickPay}
               onCancel={() => setModal3Open(false)}
             >
               {selectModel === 1 ? (
@@ -587,6 +630,94 @@ export const Debt = () => {
                   >
                     {newMonthName} oyi uchun so‘ndiriladi
                   </Title>
+                </Col>
+              ) : selectModel === 2 ? (
+                <Col
+                  style={{
+                    margin: "20px 0px 30px 0px",
+                  }}
+                >
+                  <Title
+                    level={3}
+                    style={{
+                      fontWeight: 700,
+                      fontSize: "14px",
+                      color: "var(--text)",
+                      margin: 0,
+                    }}
+                  >
+                    Miqdorni kiriting
+                  </Title>
+                  <Input
+                    type="number"
+                    placeholder="To‘lov miqdori"
+                    required
+                    variant="filled"
+                    style={{
+                      padding: "10px",
+                      margin: "8px 0px",
+                    }}
+                    min="0"
+                    onChange={(e) => handleChange(e)}
+                  />
+                  {error && (
+                    <p style={{ color: "red", margin: "4px 0px" }}>{error}</p>
+                  )}
+                  <Title
+                    level={3}
+                    style={{
+                      fontWeight: 400,
+                      fontSize: "14px",
+                      color: "var(--text)",
+                      margin: 0,
+                    }}
+                  >
+                    Qolgan summa:{" "}
+                    {data?.data?.debt_sum - sum < 0
+                      ? "0"
+                      : data?.data?.debt_sum - sum}
+                  </Title>
+                </Col>
+              ) : selectModel === 3 ? (
+                <Col
+                  style={{
+                    margin: "20px 0px 30px 0px",
+                  }}
+                >
+                  <Row>
+                    <Col>
+                      <Title
+                        level={3}
+                        style={{
+                          fontWeight: 700,
+                          fontSize: "16px",
+                          color: "var(--text)",
+                          margin: "0px 0px 10px 0px ",
+                        }}
+                      >
+                        So‘ndirish:
+                      </Title>
+                      <Title
+                        level={3}
+                        style={{
+                          fontWeight: 700,
+                          fontSize: "20px",
+                          color: "var(--brand)",
+                          margin: 0,
+                        }}
+                      >
+                        0.00 so‘m
+                      </Title>
+                    </Col>
+                    <Checkbox
+                      onChange={onCheckAllChange}
+                      checked={checkAll}
+                      indeterminate={indeterminate}
+                    >
+                      Check all
+                    </Checkbox>
+                  </Row>
+                  <Col>{[Array(data.data.debt_period)]}</Col>
                 </Col>
               ) : null}
             </Modal>

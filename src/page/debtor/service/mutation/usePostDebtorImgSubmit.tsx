@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { request } from "../../../../config/request";
 interface DebtorImageData {
-  debtorId: string;
+  debtorId: string | undefined;
   url: string;
 }
 

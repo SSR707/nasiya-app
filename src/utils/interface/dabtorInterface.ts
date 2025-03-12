@@ -13,6 +13,11 @@ export interface Debt {
   images: [];
 }
 
+interface DebtorImages {
+  image: string ,
+  id: string
+}
+
 export interface Debtor {
   id: string;
   created_at: string;
@@ -22,7 +27,7 @@ export interface Debtor {
   image: string;
   address: string;
   note: string;
-  images?: string[];
+  images?: DebtorImages[] | undefined;
   likes?: string[];
   debts?: Debt[];
   store_id: string;
