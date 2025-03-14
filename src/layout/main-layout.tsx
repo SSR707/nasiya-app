@@ -5,6 +5,7 @@ import {
   UserOutlined,
   UserAddOutlined,
   LogoutOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { Button, Col, Layout, Menu, Modal, Row } from "antd";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -12,7 +13,6 @@ import { useGetUserCheck } from "../page/login/service/query/useGetUserCheck";
 import { loadState } from "../config/storage";
 import Title from "antd/es/typography/Title";
 import EssyCeditLogo from "../assets/svg/Easycredit-logo.svg";
-import UserImg from "../assets/svg/defaultUserimg.jpg";
 import Calendar from "../assets/svg/kalendar.svg";
 import "./style/layout.css";
 
@@ -152,7 +152,7 @@ const MainLayout: React.FC = () => {
             },
             {
               key: "3",
-              icon: <UserOutlined />,
+              icon: <SettingOutlined />,
               label: (
                 <Link
                   to="/profile"
