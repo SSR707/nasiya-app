@@ -9,6 +9,7 @@ import { DebtAdd } from "./page/debt/debtAdd";
 import { Debt } from "./page/debt/debt";
 import { DebtorEdit } from "./page/debtor-ditiel/debtorEdit";
 import { DebtEdit } from "./page/debt/debtEdit";
+import { Profile } from "./page/profile/profile";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="debtor/:id/debt/add" element={<DebtAdd />} />
           <Route path="debt/edit/:id" element={<DebtEdit />} />
           <Route path="debt/:id" element={<Debt />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </>

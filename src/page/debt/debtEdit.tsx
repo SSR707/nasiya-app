@@ -18,13 +18,14 @@ import Title from "antd/es/typography/Title";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
-import { addDebt, deleteDebtImg } from "../../store/slices/debt-reducer";
 import { usePostDebtImg } from "./service/mutation/usePostDebtImg";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePostDebtUploadImg } from "./service/mutation/usePostDebtUploadImg";
 import "./style/debt.css";
 import { useGetDebtById } from "./service/query/useGetDebtById";
 import { useUpdateDebt } from "./service/mutation/useUpdateDebt";
+import { client } from "../../config/query-client";
+import { useDeleteDebtImg } from "./service/mutation/useDeleteDebtImg";
 
 export const DebtEdit = () => {
   const { id } = useParams();
@@ -33,7 +34,7 @@ export const DebtEdit = () => {
   const [chekBoxToggal, setchekBoxToggal] = useState(false);
   const { data, isLoading } = useGetDebtById(id);
   const { mutate: updateDebt } = useUpdateDebt();
-  console.log(data);
+  const { mutate: deleteDebtImg } = useDeleteDebtImg();
   const { mutate, isPending } = usePostDebtImg();
   const { mutate: UploadImg } = usePostDebtUploadImg();
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
@@ -71,7 +72,7 @@ export const DebtEdit = () => {
             message: "Muvaffaqiyatli saqlandi",
             description: "Debt ma'lumotlari muvaffaqiyatli qo'shildi!",
           });
-          navigate(`/debt/${id}`);
+          navigate(`/debt/${id}`, { replace: true });
         },
         onError: (error) => {
           api.error({
@@ -85,11 +86,20 @@ export const DebtEdit = () => {
   const changeImg: UploadProps["onChange"] = ({ file }) => {
     if (file.originFileObj && !isPending) {
       mutate(file.originFileObj, {
-        onSuccess: (data) => {},
+        onSuccess: (data) => {
+          UploadImg({ debt_id: id, url: data.data.image_url });
+          client.invalidateQueries({ queryKey: ["debt", id] });
+        },
       });
     }
   };
-  const removeImg = (file: any) => {};
+  const removeImg = (file: any) => {
+    deleteDebtImg(file.uid, {
+      onSuccess: () => {
+        client.invalidateQueries({ queryKey: ["debt", id] });
+      },
+    });
+  };
   return (
     <>
       {isLoading ? (

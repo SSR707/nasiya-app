@@ -74,7 +74,6 @@ export const DebtorEdit = () => {
     if (file.originFileObj && !createImgPeading) {
       uploadMutate(file.originFileObj, {
         onSuccess: (data) => {
-          client.invalidateQueries({ queryKey: ["debtor", id] });
           uploadMutateSubmit(
             {
               debtorId: id,
@@ -86,6 +85,7 @@ export const DebtorEdit = () => {
               },
             }
           );
+          client.invalidateQueries({ queryKey: ["debtor", id] });
         },
       });
     }
