@@ -323,19 +323,59 @@ export const Profile = () => {
             </Col>
           </Col>
           <Modal
+            title={
+              modal1Open ? (
+                <Title
+                  level={3}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "20px",
+                    lineHeight: "122%",
+                    color: "var(--text)",
+                    margin: 0,
+                  }}
+                >
+                  Parolni o‘zgartirish
+                </Title>
+              ) : modal2Open ? (
+                <Title
+                  level={3}
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "20px",
+                    lineHeight: "122%",
+                    color: "var(--text)",
+                    margin: 0,
+                  }}
+                >
+                  Shaxsiy malumotlar
+                </Title>
+              ) : null
+            }
             centered
             open={modal2Open || modal1Open}
             onOk={() => (modal2Open ? form.submit() : changePassword)}
             onCancel={() => {
               setModal2Open(false), setModal1Open(false);
             }}
+            okText="Saqlash"
+            okButtonProps={{
+              style: {
+                backgroundColor: "#1677ff",
+                borderRadius: "8px",
+                width: "100%",
+                padding: "20px 30px",
+                margin: 0,
+              },
+            }}
+            cancelButtonProps={{ style: { display: "none" } }}
             style={{ padding: "30px" }}
           >
             {modal2Open ? (
               <Form
                 form={form}
                 layout="vertical"
-                style={{ maxWidth: 400 }}
+                style={{ maxWidth: 400, margin: "20px 0" }}
                 variant={"filled"}
                 onFinish={onFinish}
               >
