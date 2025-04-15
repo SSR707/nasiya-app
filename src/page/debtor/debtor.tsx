@@ -11,7 +11,7 @@ import {
 } from "antd";
 
 import { useState } from "react";
-import { UserAddOutlined } from "@ant-design/icons";
+import { UserAddOutlined, EyeOutlined } from "@ant-design/icons";
 import { useGetAllDebtors } from "./service/query/useGetAllDebtors";
 import { useNavigate } from "react-router-dom";
 
@@ -61,7 +61,7 @@ export const Debtor = () => {
       key: "note",
     },
     {
-      title: "Show",
+      title: "Batafsil",
       render: (data: any) => {
         return (
           <Row>
@@ -69,10 +69,11 @@ export const Debtor = () => {
               onClick={() => navigate(`/debtor/${data.key}`)}
               type="primary"
               style={{
+                fontSize: '20px',
                 padding: "20px 30px",
               }}
             >
-              Show
+              <EyeOutlined />
             </Button>
           </Row>
         );

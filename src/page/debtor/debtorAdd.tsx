@@ -21,6 +21,7 @@ import {
 } from "../../store/slices/debtor-reducer";
 import { RootState } from "../../store/store";
 import { usePostDebtorSubmit } from "./service/mutation/usePostDebtorImgSubmit";
+import { BackBtn } from "../../components/back-btn";
 export interface DebtorI {
   full_name: string;
   phone_number: string;
@@ -109,9 +110,11 @@ export const DebtorAdd = () => {
       style={{
         margin: " 20px  36px",
         gap: "20px",
+        position: "relative",
       }}
     >
       {contextHolder}
+      <BackBtn />
       <Col
         style={{
           padding: "27px 50px",

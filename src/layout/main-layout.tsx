@@ -296,7 +296,7 @@ const MainLayout: React.FC = () => {
               </Title>
             </Col>
             {location.pathname === "/" ? (
-              <Button style={{ padding: "25px 15px", borderRadius: "15px" }}>
+              <Button onClick={() => navigate('/calendar')} style={{ padding: "25px 15px", borderRadius: "15px" }}>
                 <img src={Calendar} alt="" width={"35px"} height={"35px"} />
               </Button>
             ) : null}

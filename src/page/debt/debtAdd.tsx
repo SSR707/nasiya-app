@@ -28,6 +28,7 @@ import { usePostDebtCreate } from "./service/mutation/usePostDebtCreate";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePostDebtUploadImg } from "./service/mutation/usePostDebtUploadImg";
 import "./style/debt.css";
+import { BackBtn } from "../../components/back-btn";
 
 export const DebtAdd = () => {
   const { id } = useParams();
@@ -125,9 +126,11 @@ export const DebtAdd = () => {
       style={{
         margin: " 20px  36px",
         gap: "20px",
+        position: 'relative'
       }}
     >
       {contextHolder}
+      <BackBtn />
       <Col
         style={{
           padding: "27px 50px",

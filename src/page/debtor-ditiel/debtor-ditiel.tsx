@@ -29,6 +29,7 @@ import { client } from "../../config/query-client";
 import { useState } from "react";
 import { useDeleteDebtor } from "./service/mutation/useDeleteDebtor";
 import { useGetDebtsNextPay } from "./service/query/useGetDebtNextPay";
+import { BackBtn } from "../../components/back-btn";
 export const DebtorDitiel = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetDebtorById(id);
@@ -55,8 +56,7 @@ export const DebtorDitiel = () => {
         }, 200);
       },
       onError: (error) => {
-
-        console.log(error)
+        console.log(error);
         api.error({
           message: "Error",
           description: `Xatolik Yuz berdi! ${error}`,
@@ -128,6 +128,7 @@ export const DebtorDitiel = () => {
           }}
         >
           {contextHolder}
+          <BackBtn />
           <Col
             style={{
               width: "40%",

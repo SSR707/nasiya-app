@@ -10,19 +10,32 @@ import {
   Upload,
   UploadProps,
   Form,
+  notification,
 } from "antd";
 import Title from "antd/es/typography/Title";
-import { LoadingOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  EditOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+} from "@ant-design/icons";
 import { useGetUserProfile } from "../../layout/service/query/useGetUserProfile";
 import { useState } from "react";
 import { usePostUploadImg } from "./service/mutate/usePostUploadImg";
 import { client } from "../../config/query-client";
+import { usePutUpdateProfile } from "./service/mutate/usePutUpdateProfile";
+import { usePatchPassword } from "./service/mutate/usePatchPassword";
 export const Profile = () => {
   const { data, isLoading } = useGetUserProfile();
+  const [api, contextHolder] = notification.useNotification();
   const [modal1Open, setModal1Open] = useState(false);
   const [modal2Open, setModal2Open] = useState(false);
   const [form] = Form.useForm();
   const { mutate, isPending } = usePostUploadImg();
+  const { mutate: updateMutate, isPending: updateIsPending } =
+    usePutUpdateProfile();
+  const { mutate: updatePassword, isPending: updatePassIsPending } =
+    usePatchPassword();
   const changeUpload: UploadProps["onChange"] = ({ file }) => {
     if (file.originFileObj && !isPending) {
       mutate(file.originFileObj, {
@@ -35,11 +48,80 @@ export const Profile = () => {
       });
     }
   };
+
+  const validateConfirmPassword = (_: any, value: string) => {
+    if (!value) {
+      return Promise.reject("Yangi parolni tasdiqlang");
+    }
+    if (value !== form.getFieldValue("password")) {
+      return Promise.reject("Parollar mos kelmadi");
+    }
+    return Promise.resolve();
+  };
   const onFinish = (values: any) => {
-    console.log(values);
+    updateMutate(
+      { id: data?.data?.id, data: values },
+      {
+        onSuccess: () => {
+          api.success({
+            message: "Muvaffaqiyatli ozgardi",
+            description: "Profile ma'lumoti muvaffaqiyatli ozgardi",
+          });
+          client.invalidateQueries({ queryKey: ["user_profile"] });
+          setModal2Open(false);
+        },
+        onError: (error) => {
+          api.error({
+            message: "Error",
+            description: `${error}`,
+          });
+          client.invalidateQueries({ queryKey: ["user_profile"] });
+          setModal2Open(false);
+        },
+      }
+    );
   };
   const changePassword = (values: any) => {
-    console.log(values);
+    updatePassword(
+      { id: data.data.id, data: {old_password:values.old_password , password:values.password}},
+      {
+        onSuccess: () => {
+          api.success({
+            message: "Muvaffaqiyatli ozgardi",
+            description: "Parol muvaffaqiyatli ozgardi",
+          });
+          form.resetFields();
+          client.invalidateQueries({ queryKey: ["user_profile"] });
+          setModal1Open(false);
+        },
+        onError: (error: any) => {
+          if (error.response.data.status_code === 400) {
+            form.setFields([
+              {
+                name: "old_password",
+                errors: ["Amaldagi  parol noto‘g‘ri!"],
+              },
+            ]);
+          } else if (error.response.data.status_code === 422) {
+            form.setFields([
+              {
+                name: "password",
+                errors: [
+                  "Parol 8+ belgi, 1 katta, 1 kichik harf, 1 raqam va 1 maxsus belgidan iborat bo‘lishi kerak.",
+                ],
+              },
+            ]);
+          } else {
+            api.error({
+              message: "Error",
+              description: `${error}`,
+            });
+            client.invalidateQueries({ queryKey: ["user_profile"] });
+            setModal2Open(false);
+          }
+        },
+      }
+    );
   };
   return (
     <>
@@ -63,6 +145,7 @@ export const Profile = () => {
             gap: "25px",
           }}
         >
+          {contextHolder}
           <Col
             style={{
               width: "40%",
@@ -354,12 +437,13 @@ export const Profile = () => {
             }
             centered
             open={modal2Open || modal1Open}
-            onOk={() => (modal2Open ? form.submit() : changePassword)}
+            onOk={() => form.submit()}
             onCancel={() => {
               setModal2Open(false), setModal1Open(false);
             }}
             okText="Saqlash"
             okButtonProps={{
+              loading: updateIsPending || updatePassIsPending,
               style: {
                 backgroundColor: "#1677ff",
                 borderRadius: "8px",
@@ -449,7 +533,105 @@ export const Profile = () => {
                 </Form.Item>
               </Form>
             ) : modal1Open ? (
-              "Password"
+              <Form
+                form={form}
+                layout="vertical"
+                style={{ maxWidth: 400, margin: "20px 0" }}
+                variant={"filled"}
+                onFinish={changePassword}
+              >
+                <Form.Item
+                  label={
+                    <Title
+                      level={3}
+                      style={{
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        lineHeight: "122%",
+                        color: "var(--text)",
+                        margin: 0,
+                      }}
+                    >
+                      Amaldagi parol
+                    </Title>
+                  }
+                  name="old_password"
+                  rules={[{ required: true, message: "Eski parolni kiriting" }]}
+                >
+                  <Input.Password
+                    style={{ padding: "10px 10px" }}
+                    iconRender={(visible) =>
+                      visible ? (
+                        <EyeOutlined style={{ fontSize: "20px" }} />
+                      ) : (
+                        <EyeInvisibleOutlined style={{ fontSize: "20px" }} />
+                      )
+                    }
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={
+                    <Title
+                      level={3}
+                      style={{
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        lineHeight: "122%",
+                        color: "var(--text)",
+                        margin: 0,
+                      }}
+                    >
+                      Yangi parol
+                    </Title>
+                  }
+                  name="password"
+                  rules={[
+                    { required: true, message: "Yangi parolni kiriting" },
+                  ]}
+                >
+                  <Input.Password
+                    style={{ padding: "10px 10px" }}
+                    iconRender={(visible) =>
+                      visible ? (
+                        <EyeOutlined style={{ fontSize: "20px" }} />
+                      ) : (
+                        <EyeInvisibleOutlined style={{ fontSize: "20px" }} />
+                      )
+                    }
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={
+                    <Title
+                      level={3}
+                      style={{
+                        fontWeight: 700,
+                        fontSize: "16px",
+                        lineHeight: "122%",
+                        color: "var(--text)",
+                        margin: 0,
+                      }}
+                    >
+                      Parolni tasdiqlash
+                    </Title>
+                  }
+                  name='confirm_password'
+                  rules={[
+                    { required: true},
+                    { validator: validateConfirmPassword }]}
+                >
+                  <Input.Password
+                    style={{ padding: "10px 10px" }}
+                    iconRender={(visible) =>
+                      visible ? (
+                        <EyeOutlined style={{ fontSize: "20px" }} />
+                      ) : (
+                        <EyeInvisibleOutlined style={{ fontSize: "20px" }} />
+                      )
+                    }
+                  />
+                </Form.Item>
+              </Form>
             ) : null}
           </Modal>
         </Row>

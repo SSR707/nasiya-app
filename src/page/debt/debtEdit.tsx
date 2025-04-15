@@ -26,6 +26,7 @@ import { useGetDebtById } from "./service/query/useGetDebtById";
 import { useUpdateDebt } from "./service/mutation/useUpdateDebt";
 import { client } from "../../config/query-client";
 import { useDeleteDebtImg } from "./service/mutation/useDeleteDebtImg";
+import { BackBtn } from "../../components/back-btn";
 
 export const DebtEdit = () => {
   const { id } = useParams();
@@ -79,6 +80,7 @@ export const DebtEdit = () => {
             message: "Error",
             description: `${error}`,
           });
+          console.log(error);
         },
       }
     );
@@ -120,9 +122,11 @@ export const DebtEdit = () => {
           style={{
             margin: " 20px  36px",
             gap: "20px",
+            position: "relative",
           }}
         >
           {contextHolder}
+          <BackBtn />
           <Col
             style={{
               padding: "27px 50px",
@@ -387,7 +391,7 @@ export const DebtEdit = () => {
                 onChange={changeImg}
                 onRemove={removeImg}
                 maxCount={2}
-                fileList={data?.data?.images?.map((item, index) => ({
+                fileList={data?.data?.images?.map((item: any, index: any) => ({
                   uid: item.id,
                   name: `image-${index}`,
                   status: "done",

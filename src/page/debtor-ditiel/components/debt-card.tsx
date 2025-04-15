@@ -1,6 +1,5 @@
 import { Flex, Progress, Row } from "antd";
 import Title from "antd/es/typography/Title";
-import { useState } from "react";
 interface DebtCardI {
   date: string;
   debt_sum: string;
@@ -82,7 +81,7 @@ export const DebtCard = ({
         </span>
       </Title>
       <Flex vertical gap="small" style={{ marginTop: "25px" }}>
-        <Progress size={{ height: 13 }} percent={+paidPercentage?.toFixed(0)} type="line" />
+        <Progress size={{ height: 13 }} percent={+paidPercentage} type="line" />
       </Flex>
     </>
   );

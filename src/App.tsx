@@ -10,6 +10,7 @@ import { Debt } from "./page/debt/debt";
 import { DebtorEdit } from "./page/debtor-ditiel/debtorEdit";
 import { DebtEdit } from "./page/debt/debtEdit";
 import { Profile } from "./page/profile/profile";
+import { CalendarPage } from "./page/calendar/calendar";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
+          <Route path="calendar" element={<CalendarPage />} />
           <Route path="debtors" element={<Debtor />} />
           <Route path="debtors/add" element={<DebtorAdd />} />
           <Route path="debtors/edit/:id" element={<DebtorEdit />} />

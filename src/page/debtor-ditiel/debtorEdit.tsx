@@ -20,6 +20,7 @@ import { useUpdateDebtor } from "./service/mutation/useUpdateDebtor";
 import { useDeleteDebtorImg } from "./service/mutation/useDeleteDebtorImg";
 import { client } from "../../config/query-client";
 import { usePostDebtorSubmit } from "../debtor/service/mutation/usePostDebtorImgSubmit";
+import { BackBtn } from "../../components/back-btn";
 export interface DebtorI {
   full_name: string;
   phone_number: string;
@@ -118,9 +119,11 @@ export const DebtorEdit = () => {
           style={{
             margin: " 20px  36px",
             gap: "20px",
+            position: "relative",
           }}
         >
           {contextHolder}
+          <BackBtn />
           <Col
             style={{
               padding: "27px 50px",
