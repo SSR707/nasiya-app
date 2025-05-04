@@ -1,54 +1,105 @@
-# React + TypeScript + Vite
+# 💰 Nasiya — Credit Management System for Store Owners
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Nasiya** is a full-featured web application that helps store owners manage and track customer credit (debt) efficiently.  
+Built with **React** (frontend) and **NestJS + TypeORM** (backend), it includes a dashboard, customer and credit management, payment tracking, calendar view, and store profile settings — all in one centralized platform.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌐 Live Demo
 
-## Expanding the ESLint configuration
+🚀 **[Coming Soon]**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+🔐 **Login required (store owners only)**
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+---
+
+## 🚀 Features
+
+### 📊 Dashboard
+
+- View total outstanding debt
+- See total number of customers
+- List of overdue payments
+
+### 👤 Customers Page
+
+- List of all customers in a table
+- Search and filter functionality
+- Add new customers
+- Customer detail view:
+  - Personal information
+  - Linked credits
+  - Delete or update customer
+  - Assign new credit to a customer
+  - Track partial repayments
+  - View upcoming due dates
+
+### 💳 Credit Management
+
+- View credit details
+- Delete or update credit
+- Partial and full repayment functionality
+- Support for:
+  - Monthly repayments
+  - Custom flexible repayments
+
+### 📅 Calendar View
+
+- Select year, month, and day
+- View upcoming payments for selected date
+- See total payments due for the selected month
+
+### ⚙️ Store Settings
+
+- View and update store owner profile
+- Change password
+
+---
+
+## 🛠️ Technologies Used
+
+### Frontend
+
+- ⚛️ React
+- 🧩 Ant Design (UI Components)
+- 🟦 Redux Toolkit
+- 🔐 Axios (API integration)
+
+### Backend
+
+- 🧠 NestJS
+- 🗄️ TypeORM
+- 🐘 PostgreSQL
+
+---
+
+## 🔐 Access
+
+- This system is currently for **store owners only**
+- Customers **do not** have access
+
+---
+
+## 📦 Installation
+
+### Frontend
+
+```bash
+git clone https://github.com/yourusername/nasiya-frontend
+cd nasiya-frontend
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Backend
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+git clone https://github.com/yourusername/nasiya-backend
+cd nasiya-backend
+npm install
+npm run start:dev
 ```
+
+## 🧑‍💻 Author
+Built and maintained by SSR707
+📧 Contact: samandarshavkatov07@gmail.com
